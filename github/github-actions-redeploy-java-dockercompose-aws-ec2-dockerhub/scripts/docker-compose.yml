@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  helloworld:
+    image: wisniewskikr/github-actions-redeploy-java-dockercompose-aws-ec2-dockerhub
+    container_name: helloworld-container
+    ports:
+      - 8080:8080
+    networks:
+      - helloworld-network
+
+networks:
+  helloworld-network:
+    name: helloworld-network-name

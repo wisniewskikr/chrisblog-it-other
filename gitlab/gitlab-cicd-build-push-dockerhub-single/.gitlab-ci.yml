@@ -1,0 +1,22 @@
+image: docker:latest
+services:
+  - docker:dind
+
+stages:
+  - build
+  - deploy
+
+maven-build:
+  image: maven:3.8.3-openjdk-17
+  stage: build
+  script: "mvn clean package"
+  artifacts:
+    paths:
+      - target/*.jar
+
+docker-build-push:
+  stage: deploy
+  script:
+  - docker build -t wisniewskikr/gitlab-cicd-build-push-dockerhub-single .
+  - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_ACCESS_TOKEN
+  - docker push wisniewskikr/gitlab-cicd-build-push-dockerhub-single

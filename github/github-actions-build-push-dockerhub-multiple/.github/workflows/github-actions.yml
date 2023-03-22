@@ -1,0 +1,36 @@
+name: Build and push to Docker Hub
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  deploy:
+    name: Build and push to Docker Hubs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the files
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+     
+      - name: Build and push BE Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./springboot-helloworld-port-uuid-docker-multiple-be
+          push: true
+          tags: wisniewskikr/github-actions-build-push-dockerhub-multiple-be:latest
+      
+      - name: Build and push FE Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./springboot-helloworld-port-uuid-docker-multiple-fe
+          push: true
+          tags: wisniewskikr/github-actions-build-push-dockerhub-multiple-fe:latest

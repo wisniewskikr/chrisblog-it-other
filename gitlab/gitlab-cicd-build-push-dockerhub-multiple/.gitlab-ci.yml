@@ -1,0 +1,39 @@
+image: docker:latest
+services:
+  - docker:dind
+
+stages:
+  - build-be
+  - deploy-be
+  - build-fe
+  - deploy-fe
+
+maven-build-be:
+  image: maven:3.8.3-openjdk-17
+  stage: build-be
+  script: "mvn clean package"
+  artifacts:
+    paths:
+      - springboot-helloworld-port-uuid-docker-multiple-be/target/*.jar
+
+docker-build-push-be:
+  stage: deploy-be
+  script:
+  - docker build -t wisniewskikr/gitlab-springboot-helloworld-port-uuid-docker-multiple-be ./springboot-helloworld-port-uuid-docker-multiple-be
+  - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_ACCESS_TOKEN
+  - docker push wisniewskikr/gitlab-springboot-helloworld-port-uuid-docker-multiple-be
+  
+maven-build-fe:
+  image: maven:3.8.3-openjdk-17
+  stage: build-fe
+  script: "mvn clean package"
+  artifacts:
+    paths:
+      - springboot-helloworld-port-uuid-docker-multiple-fe/target/*.jar
+
+docker-build-push-fe:
+  stage: deploy-fe
+  script:
+  - docker build -t wisniewskikr/gitlab-springboot-helloworld-port-uuid-docker-multiple-fe ./springboot-helloworld-port-uuid-docker-multiple-fe
+  - docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_ACCESS_TOKEN
+  - docker push wisniewskikr/gitlab-springboot-helloworld-port-uuid-docker-multiple-fe
